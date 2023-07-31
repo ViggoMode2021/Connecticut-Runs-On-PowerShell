@@ -1,6 +1,8 @@
 # Connecticut-Runs-On-PowerShell
 Automation is as fun and addictive as a nice cup of coffee. PowerShell is the vehicle in which it thrives.
 
+<code><img height="300" src="https://raw.githubusercontent.com/ViggoMode2021/Connecticut-Runs-On-PowerShell/main/Connecticut-Runs-On-PowerShell.jpg"></code>
+
 ** About the motivation for this repository **
 
 PowerShell is my favorite 'programming' language. To me, curating scripts to automate menial tasks and pushing the envelope to make them robust is what I have been living for.
