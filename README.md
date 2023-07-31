@@ -22,6 +22,8 @@ Ryan began coding with Python in May 2021. As of 2023, Ryan holds two AWS certif
 
 Life after the bootcamp saw Ryan working on his biggest project to date, VigLMS.org, a learning management system similar to PowerSchool. VigLMS was created to facilitate Ryan's main goal of creating software for both educators and students. VigLMS is written in the Python web framework, Flask, and utilizes PostgreSQL as it's database. It also capitalized on services like AWS S3 for file (object) storage and AWS Cognito for user authentication. VigLMS was hosted on Google Cloud App Engine and utilized CloudFlare for TLS. VigLMS had to be taken down due to budgeting reasons. 
 
+In November 2023, Ryan started working in the IT department at a local school district. His interests in System Administration, Windows Server, Networking, and of course, PowerShell, grew in tandem with his newly found responsibilities.
+
 # Other non-PowerShell-projects #
 
 ** Practice Spanish, Buy Flights **
