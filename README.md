@@ -4,7 +4,7 @@ Automation is as fun and addictive as a nice cup of coffee. PowerShell is the ve
 ** About this repository **
 
 PowerShell is my favorite 'programming' language. To me, curating scripts to automate menial tasks and pushing the envelope to make them robust is what I have been living for.
-I work doing help desk/assistant systems administration work and when I am not studying on IT theories and best practices, I am taking to the terminal/IDE to figure out how to make the most of Windows and Windows Server/Active Directory. In tech, we hear a lot of Windows slander. I do love Linux and see the beauty in it, but the reality is that most people work with Windows, especially in a corporate/educational environment. 
+I work doing help desk/assistant systems administration work and when I am not studying on IT theories and best practices, I am taking to the terminal/IDE to figure out how to make the most of Windows and Windows Server/Active Directory. In tech, I hear a lot of Windows slander and heavy Linux/Unix bias. I do love Linux and see the beauty in it, but the reality is that most people in the real world work with Windows, especially in a corporate/educational environment. Therefore, why not capitalize on making the best of it? PowerShell is robust and is our friend. 
 
 ** About the creator **
 
