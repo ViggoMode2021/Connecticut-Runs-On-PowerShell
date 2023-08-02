@@ -228,7 +228,8 @@ $Date = Get-Date -Format "MM-dd-yyyy"
 
 Write-Host "Welcome to The IP Binary Game. You will receive a few networking questions for today, $Date." -ForegroundColor Yellow
 
-$IP_Choice = Read-Host "Would you like to practice converting your own IP to binary (press 1) or let the game ranndomly pick an IP address of a popular web server for you (press 2)?"
+$IP_Choice = Read-Host "Would you like to practice converting your own IP to binary (press 1) or let the game ranndomly pick an IP address of a popular web server for you (press 2)?
+If you would like to just practice the OSI model, press 3."
 
 if($IP_Choice -eq "1"){
 
@@ -241,3 +242,58 @@ if($IP_Choice -eq "2"){
 Get-Random_Website_IP
 
 }
+
+if($IP_Choice -eq "3"){
+
+OSI_Model_Practice
+
+}
+
+function OSI_Model_Practice{
+
+Write-Host "######################################################################################" -ForeGroundColor Green
+
+$Layer_1 = Read-Host "The lowest layer of the OSI reference model is the ___________________ layer. 
+It is responsible for the actual _______________ connection between the devices. 
+The ___________________ layer contains information in the form of bits. 
+It is responsible for transmitting individual bits from one node to the next. 
+When receiving data, this layer will get the signal received and convert it into 0s and 1s and send them to layer 2, 
+which will put the frame back together."
+
+if($Layer_1 -eq "Physical"){
+
+Write-Host "Correct, the answer is 'Physical'" -ForegroundColor Green
+
+}
+
+else{
+
+Write-Host "Incorrect, the answer is 'Physical'" -ForegroundColor Red 
+
+}
+
+##
+
+Write-Host "######################################################################################" -ForeGroundColor Green
+
+$Layer_2 = Read-Host "The ____________ layer is responsible for the node-to-node delivery of the message. 
+The main function of this layer is to make sure data transfer is error-free from one node to another, 
+over the physical layer. When a packet arrives in a network, 
+it is the responsibility of the ____________ layer to transmit it to the Host using its MAC address. 
+The ____________ Layer is divided into two sublayers: Logical Link Control (LLC) Media Access Control (MAC)."
+
+if($Layer_2 -eq "Data Link"){
+
+Write-Host "Correct, the answer is 'Data Link'" -ForegroundColor Green
+
+}
+
+else{
+
+Write-Host "Incorrect, the answer is 'Data Link'" -ForegroundColor Red 
+
+}
+
+}
+
+OSI_Model_Practice
