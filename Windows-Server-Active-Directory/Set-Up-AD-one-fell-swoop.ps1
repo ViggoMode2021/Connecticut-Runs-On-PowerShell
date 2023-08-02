@@ -1,4 +1,4 @@
-Add-WindowsFeature AD-Domain-Services
+Add-WindowsFeature AD-Domain-Services -IncludeManagementTools
 
 Install-ADDSForest -DomainName vigschools.org -InstallDNS
 
