@@ -186,6 +186,18 @@ Rename-Computer -NewName "vigschools-domain-controller"
 
 Add-WindowsFeature AD-Domain-Services -IncludeManagementTools
 
-Install-ADDSForest -DomainName vigschools.org -InstallDNS
+$Install_ADDS_Params = @{
+    CreateDnsDelegation           = $False
+    DatabasePath                  = "C:\Windows\NTDS"
+    DomainMode                    = "WinThreshold"
+    DomainName                    = "vigschools.org"
+    DomainNetbiosName             = "vigschools"
+    SafeModeAdministratorPassword = (ConvertTo-SecureString -String "!" -AsPlainText -Force)
+    ForestMode                    = "WinThreshold"
+    InstallDns                    = $True
+    LogPath                       = "C:\Windows\NTDS"
+    NoRebootOnCompletion          = $False
+    SysvolPath                    = "C:\Windows\SYSVOL"
+    Force                         = $True
 
-Restart-Computer
+Install-ADDSForest @Install_ADDS_Params 
