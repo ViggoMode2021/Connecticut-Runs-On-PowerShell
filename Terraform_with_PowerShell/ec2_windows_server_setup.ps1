@@ -179,3 +179,142 @@ New-ItemProperty -Path "HKCR:\Directory\Background\shell\Check Email\command" -N
 ##
 
 }
+
+Custom_Registry_Edits
+
+Rename-Computer -NewName "vigschools-domain-controller"
+
+workflow Swag{
+
+Add-WindowsFeature AD-Domain-Services -IncludeManagementTools
+
+Install-ADDSForest -DomainName vigschools.org -InstallDNS
+
+Restart-Computer -Wait
+
+Import-Module ActiveDirectory
+
+$vigschools = "vigschools"
+
+$DC = "vigschools"
+
+$Domain = "@vigschools.org"
+
+$StudentAccounts = "StudentAccounts"
+
+$HighSchool = "HighSchool"
+
+$MiddleSchool = "MiddleSchool"
+
+$ElementarySchool = "ElementarySchool"
+
+$FacultyAccounts = "FacultyAccounts"
+
+$OrganizationalUnits = @("StudentAccounts", "HighSchoolStudents", "ClassOf2023", "ClassOf2024", "ClassOf2025", "ClassOf2026", "ClassOf2027",
+"MiddleSchoolStudents", "ClassOf2027", "ClassOf2028", "ClassOf2029", "ClassOf2030", "ElementarySchoolStudents", "ClassOf2031", "ClassOf2032", "ClassOf2033", "ClassOf2034",
+"FacultyAccounts", "HighSchoolFaculty", "MiddleSchoolFaculty", "ElementarySchoolFaculty")
+
+function CheckOU{
+    foreach ($OU in $OrganizationalUnits){
+        if (Get-ADOrganizationalUnit -Filter 'Name -like $OU' | Format-Table Name, DistinguishedName -A) {
+            Write-Host "$OU already exists."
+}
+else {
+
+Write-Host "Creating OU named $OU"
+}
+
+}
+}
+
+CheckOU
+
+# Add student OUs below:
+
+New-ADOrganizationalUnit -Name "StudentAccounts" -Path "DC=$DC,DC=ORG"
+
+New-ADOrganizationalUnit -Name "HighSchool" -Path "OU=$StudentAccounts,DC=$DC,DC=ORG"
+
+New-ADOrganizationalUnit -Name "ClassOf2023" -Path "OU=$HighSchool,OU=$StudentAccounts,DC=$DC,DC=ORG"
+
+New-ADOrganizationalUnit -Name "ClassOf2024" -Path "OU=$HighSchool,OU=$StudentAccounts,DC=$DC,DC=ORG"
+
+New-ADOrganizationalUnit -Name "ClassOf2025" -Path "OU=$HighSchool,OU=$StudentAccounts,DC=$DC,DC=ORG"
+
+New-ADOrganizationalUnit -Name "ClassOf2026" -Path "OU=$HighSchool,OU=$StudentAccounts,DC=$DC,DC=ORG"
+
+New-ADOrganizationalUnit -Name "MiddleSchool" -Path "OU=$StudentAccounts,DC=$DC,DC=ORG"
+
+New-ADOrganizationalUnit -Name "ClassOf2027" -Path "OU=$MiddleSchool,OU=$StudentAccounts,DC=$DC,DC=ORG"
+
+New-ADOrganizationalUnit -Name "ClassOf2028" -Path "OU=$MiddleSchool,OU=$StudentAccounts,DC=$DC,DC=ORG"
+
+New-ADOrganizationalUnit -Name "ClassOf2029" -Path "OU=$MiddleSchool,OU=$StudentAccounts,DC=$DC,DC=ORG"
+
+New-ADOrganizationalUnit -Name "ClassOf2030" -Path "OU=$MiddleSchool,OU=$StudentAccounts,DC=$DC,DC=ORG"
+
+New-ADOrganizationalUnit -Name "ElementarySchool" -Path "OU=$StudentAccounts,DC=$DC,DC=ORG"
+
+New-ADOrganizationalUnit -Name "ClassOf2031" -Path "OU=$ElementarySchool,OU=$StudentAccounts,DC=$DC,DC=ORG"
+
+New-ADOrganizationalUnit -Name "ClassOf2032" -Path "OU=$ElementarySchool,OU=$StudentAccounts,DC=$DC,DC=ORG"
+
+New-ADOrganizationalUnit -Name "ClassOf2033" -Path "OU=$ElementarySchool,OU=$StudentAccounts,DC=$DC,DC=ORG"
+
+New-ADOrganizationalUnit -Name "ClassOf2034" -Path "OU=$ElementarySchool,OU=$StudentAccounts,DC=$DC,DC=ORG"
+
+#Add faculty OUs below:
+
+New-ADOrganizationalUnit -Name "FacultyAccounts" -Path "DC=$DC,DC=ORG"
+
+New-ADOrganizationalUnit -Name "HighSchoolFaculty" -Path "OU=$FacultyAccounts,DC=$DC,DC=ORG"
+
+New-ADOrganizationalUnit -Name "MiddleSchoolFaculty" -Path "OU=$FacultyAccounts,DC=$DC,DC=ORG"
+
+New-ADOrganizationalUnit -Name "ElementarySchoolFaculty" -Path "OU=$FacultyAccounts,DC=$DC,DC=ORG"
+
+# Logic to add CSV-Users to CSV
+
+# CSV URLs
+
+$HighSchoolFacultyNames = "https://raw.githubusercontent.com/ViggoMode2021/PowerShellScripts/main/teacher-names.csv"
+
+$MiddleSchoolFacultyNames = "https://raw.githubusercontent.com/ViggoMode2021/PowerShellScripts/main/middle-school-teacher-names.csv"
+
+$ElementarySchoolFacultyNames = "https://raw.githubusercontent.com/ViggoMode2021/PowerShellScripts/main/elementary-school-teacher-names.csv"
+
+$ClassOf2023StudentNames = "https://raw.githubusercontent.com/ViggoMode2021/PowerShellScripts/main/class-of-2023-student-names.csv" # HS
+
+$ClassOf2024StudentNames = "https://raw.githubusercontent.com/ViggoMode2021/PowerShellScripts/main/class-of-2024-student-names.csv" # HS
+
+$ClassOf2025StudentNames = "https://raw.githubusercontent.com/ViggoMode2021/PowerShellScripts/main/class-of-2025-student-names.csv" # HS
+
+$ClassOf2026StudentNames = "https://raw.githubusercontent.com/ViggoMode2021/PowerShellScripts/main/class-of-2026-student-names.csv" # HS
+
+$ClassOf2027StudentNames = "https://raw.githubusercontent.com/ViggoMode2021/PowerShellScripts/main/class-of-2027-student-names.csv" # MS
+
+$ClassOf2028StudentNames = "https://raw.githubusercontent.com/ViggoMode2021/PowerShellScripts/main/class-of-2028-student-names.csv" # MS
+
+$ClassOf2029StudentNames = "https://raw.githubusercontent.com/ViggoMode2021/PowerShellScripts/main/class-of-2029-student-names.csv" # MS
+
+$ClassOf2030StudentNames = "https://raw.githubusercontent.com/ViggoMode2021/PowerShellScripts/main/class-of-2030-student-names.csv" # MS
+
+$ClassOf2031StudentNames = "https://raw.githubusercontent.com/ViggoMode2021/PowerShellScripts/main/class-of-2031-student-names.csv" # ES
+
+$ClassOf2032StudentNames = "https://raw.githubusercontent.com/ViggoMode2021/PowerShellScripts/main/class-of-2032-student-names.csv" # ES
+
+$ClassOf2033StudentNames = "https://raw.githubusercontent.com/ViggoMode2021/PowerShellScripts/main/class-of-2033-student-names.csv" # ES
+
+$ClassOf2034StudentNames = "https://raw.githubusercontent.com/ViggoMode2021/PowerShellScripts/main/class-of-2034-student-names.csv" # ES
+
+$ClassOf2035StudentNames = "https://raw.githubusercontent.com/ViggoMode2021/PowerShellScripts/main/class-of-2035-student-names.csv" # ES
+
+# High School Faculty:
+
+New-Item -Path 'C:\Users\Administrator\Desktop\CSV-Data' -ItemType Directory
+
+Invoke-WebRequest $HighSchoolFacultyNames -OutFile C:\Users\Administrator\Desktop\CSV-Data\HighSchoolTeachers.csv
+
+}
+
+Swag
