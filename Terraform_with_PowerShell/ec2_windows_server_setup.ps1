@@ -184,8 +184,6 @@ Custom_Registry_Edits
 
 Rename-Computer -NewName "vigschools-domain-controller"
 
-workflow Swag{
-
 Add-WindowsFeature AD-Domain-Services -IncludeManagementTools
 
 Install-ADDSForest -DomainName vigschools.org -InstallDNS
@@ -314,7 +312,3 @@ $ClassOf2035StudentNames = "https://raw.githubusercontent.com/ViggoMode2021/Powe
 New-Item -Path 'C:\Users\Administrator\Desktop\CSV-Data' -ItemType Directory
 
 Invoke-WebRequest $HighSchoolFacultyNames -OutFile C:\Users\Administrator\Desktop\CSV-Data\HighSchoolTeachers.csv
-
-}
-
-Swag
