@@ -186,13 +186,15 @@ Rename-Computer -NewName "vigschools-domain-controller"
 
 Add-WindowsFeature AD-Domain-Services -IncludeManagementTools
 
+Add-WindowsFeature AD-Domain-Services -IncludeManagementTools
+
 $Install_ADDS_Params = @{
     CreateDnsDelegation           = $False
     DatabasePath                  = "C:\Windows\NTDS"
     DomainMode                    = "WinThreshold"
     DomainName                    = "vigschools.org"
     DomainNetbiosName             = "vigschools"
-    SafeModeAdministratorPassword = (ConvertTo-SecureString -String "!" -AsPlainText -Force)
+    SafeModeAdministratorPassword = (ConvertTo-SecureString -String "PowerShell2023!" -AsPlainText -Force)
     ForestMode                    = "WinThreshold"
     InstallDns                    = $True
     LogPath                       = "C:\Windows\NTDS"
