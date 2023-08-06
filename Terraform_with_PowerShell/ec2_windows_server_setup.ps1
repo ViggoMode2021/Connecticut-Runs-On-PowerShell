@@ -182,9 +182,7 @@ New-ItemProperty -Path "HKCR:\Directory\Background\shell\Check Email\command" -N
 
 Custom_Registry_Edits
 
-Rename-Computer -NewName "vigschools-domain-controller"
-
-Add-WindowsFeature AD-Domain-Services -IncludeManagementTools
+Rename-Computer -NewName "vigschools-dc"
 
 Add-WindowsFeature AD-Domain-Services -IncludeManagementTools
 
@@ -201,5 +199,7 @@ $Install_ADDS_Params = @{
     NoRebootOnCompletion          = $False
     SysvolPath                    = "C:\Windows\SYSVOL"
     Force                         = $True
+
+}
 
 Install-ADDSForest @Install_ADDS_Params 
