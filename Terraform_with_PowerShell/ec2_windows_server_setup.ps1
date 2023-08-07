@@ -168,38 +168,6 @@ if ($RunScriptSilent -NE $True){
 
 Sleep 2
 
-function Custom_Registry_Edits {
-
-New-Item -Path "HKCR:\Directory\Background\shell" -Name "Check Email" 
-
-New-Item -Path "HKCR:\Directory\Background\shell\Check Email" -Name "command" 
-
-New-ItemProperty -Path "HKCR:\Directory\Background\shell\Check Email\command" -Name "(Default)" -Value '"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" "gmail.com"' -Type String
-
-##
-
-}
-
-Custom_Registry_Edits
-
 Rename-Computer -NewName "vigschools-dc"
 
-Add-WindowsFeature AD-Domain-Services -IncludeManagementTools
-
-$Install_ADDS_Params = @{
-    CreateDnsDelegation           = $False
-    DatabasePath                  = "C:\Windows\NTDS"
-    DomainMode                    = "WinThreshold"
-    DomainName                    = "vigschools.org"
-    DomainNetbiosName             = "vigschools"
-    SafeModeAdministratorPassword = (ConvertTo-SecureString -String "PowerShell2023!" -AsPlainText -Force)
-    ForestMode                    = "WinThreshold"
-    InstallDns                    = $True
-    LogPath                       = "C:\Windows\NTDS"
-    NoRebootOnCompletion          = $False
-    SysvolPath                    = "C:\Windows\SYSVOL"
-    Force                         = $True
-
-}
-
-Install-ADDSForest @Install_ADDS_Params 
+Restart-Computer
