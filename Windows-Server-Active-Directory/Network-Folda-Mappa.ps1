@@ -1,6 +1,6 @@
 # Folder mapper # Reference https://www.youtube.com/watch?v=OVln4mAqP30
 
-# Remove-PSDrive -Name L
+# Remove-PSDrive -Name M
 
 # Get-ADGroup -Filter "*" | Remove-ADGroup
 
@@ -22,11 +22,9 @@
 
 $Domain = Get-ADDomain | Select -expand Name
 
-New-ADGroup -Name MathFileShare -GroupCategory Security -GroupScope DomainLocal -Path "OU=FacultyAccounts,DC=$Domain,DC=org" | Get-ADUser -Properties Description -Filter {Description -like "History"} -SearchBase "OU=FacultyAccounts,DC=$Domain,DC=org" | ForEach-Object { Add-ADGroupMember -Identity $_.SamAccountName -Members $_ }
+New-ADGroup -Name MathFileShare -GroupCategory Security -GroupScope DomainLocal -Path "OU=FacultyAccounts,DC=$Domain,DC=org"
 
-New-ADGroup -Name HistoryFileShare -GroupCategory Security -GroupScope DomainLocal -Path "OU=FacultyAccounts,DC=$Domain,DC=org"
-
-Get-ADUser -Properties Description -Filter {Description -like "Math"} -SearchBase 
+Get-ADUser -Filter {Description -like "Math"} | % { Add-ADGroupMember 'MathFileShare' -Members $_ }
 
 
 New-ADGroup -Name HistoryFileShare -GroupCategory Security -GroupScope DomainLocal -Path "OU=FacultyAccounts,DC=$Domain,DC=org"
@@ -34,17 +32,22 @@ New-ADGroup -Name HistoryFileShare -GroupCategory Security -GroupScope DomainLoc
 Get-ADUser -Filter {Description -like "History"} | % { Add-ADGroupMember 'HistoryFileShare' -Members $_ }
 
 
-
-
 New-Item -Type Directory -Name Math-FileShare -Path "C:\"
 
 New-Item -Type Directory -Name History-FileShare -Path "C:\"
 
 New-SMBShare `
-    –Name Faculty-FileShares `
-    –Path 'C:\Faculty-FileShares' ` `
-    –FullAccess Faculty-FileShare ` 
+    –Name Math-FileShare `
+    –Path 'C:\Math-FileShare' ` `
+    –FullAccess MathFileShare ` 
 
 $Hostname = hostname
 
-New-PSDrive -Name "L" -PSProvider "FileSystem" -Root "\\$Hostname\Faculty-FileShares" -Persist
+New-PSDrive -Name "M" -PSProvider "FileSystem" -Root "\\$Hostname\Math-FileShare" -Persist
+
+New-SMBShare `
+    –Name History-FileShare `
+    –Path 'C:\History-FileShare' ` `
+    –FullAccess HistoryFileShare ` 
+
+New-PSDrive -Name "H" -PSProvider "FileSystem" -Root "\\$Hostname\History-FileShare" -Persist
