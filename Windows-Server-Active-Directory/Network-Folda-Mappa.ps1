@@ -93,3 +93,17 @@ Write-Host $Member
 Set-ADUser -Identity $Member -HomeDirectory "\\$Hostname\History-FileShare\$Member" -HomeDrive H;
 
 }
+
+<#
+
+
+#Unhide 
+
+
+$folder = Get-Item C:\History-FileShare -Force
+$folder.Attributes = $folder.Attributes -band -bnot [System.IO.FileAttributes]::Hidden
+
+$folder = Get-Item C:\Math-FileShare -Force
+$folder.Attributes = $folder.Attributes -band -bnot [System.IO.FileAttributes]::Hidden
+
+#>
