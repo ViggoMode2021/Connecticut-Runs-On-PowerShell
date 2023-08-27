@@ -2,7 +2,17 @@
 
 #https://winaero.com/enable-disable-inherited-permissions-windows-10/
 
-# Remove-PSDrive -Name M
+<#
+
+Remove-PSDrive -Name M
+
+Remove-PSDrive -Name H
+
+net use * /delete
+
+
+
+#>
 
 # Get-ADGroup -Filter "*" | Remove-ADGroup
 
@@ -64,4 +74,22 @@ New-PSDrive -Name "H" -PSProvider "FileSystem" -Root "\\$Hostname\History-FileSh
 
 Write-Host "Creating History fileshare" -ForegroundColor "Green"
 
-Get-ADUser -Filter {Description -like "Math"} | Set-ADUser -HomeDirectory \\$Hostname\Math-FileShare\%username% -HomeDrive M;
+$Math_Faculty = Get-ADUser -Filter {Description -like "Math"} | Select -expand SamAccountName
+
+foreach ($Member in $Math_Faculty){
+
+Write-Host $Member
+
+Set-ADUser -Identity $Member -HomeDirectory "\\$Hostname\Math-FileShare\$Member" -HomeDrive M;
+
+}
+
+$History_Faculty = Get-ADUser -Filter {Description -like "History"} | Select -expand SamAccountName
+
+foreach ($Member in $History_Faculty){
+
+Write-Host $Member
+
+Set-ADUser -Identity $Member -HomeDirectory "\\$Hostname\History-FileShare\$Member" -HomeDrive H;
+
+}
