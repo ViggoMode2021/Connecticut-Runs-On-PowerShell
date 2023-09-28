@@ -1,6 +1,8 @@
 $Desktop_Path = [Environment]::GetFolderPath("Desktop")
 
 $Keylog_Path = "$Desktop_Path\keylog.txt"
+
+$Shutdown_Words = Get-Content "$Desktop_Path\Shutdown-Words.csv"
  
 if ((Test-Path $Keylog_Path) -eq $False) { New-Item $Keylog_Path } 
 
@@ -49,11 +51,14 @@ try {
 
                     $Keylogger_Contents = Get-Content -Path $Keylog_Path
 
-                    if ($Keylogger_Contents | Select-String -Pattern "Yuto") {
+                    foreach ($Word in $Shutdown_Words) {
 
-                        Write-Host "Word is in keylogger." -ForegroundColor Red
-                        Stop-Process -Name "msedge"
-                        Remove-Item 
+                        if ($Keylogger_Contents | Select-String -Pattern $Word) {
+
+                            Write-Host "$Word is in keylogger." -ForegroundColor Red
+                            Stop-Process -Name "msedge"
+                            Remove-Item $Keylog_Path
+                        }
                     }
 
                 }
