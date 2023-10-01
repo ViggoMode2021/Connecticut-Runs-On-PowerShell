@@ -10,6 +10,40 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
 
 $Is_Browser_Open = Get-Process -Name '*edge*' | Where-Object { $_.MainWindowHandle -gt 0 }
 
+$BrowsEnder_Window = New-Object System.Windows.Forms.Form
+
+$BrowsEnder_Window.StartPosition = 'CenterScreen'
+
+$BrowsEnder_Window.Text = "BrowsEnder"
+
+$BrowsEnder_Window.BackColor = "White"
+
+$BrowsEnder_Window.Font = 'Verdana,11,style=Bold'
+
+$Label_Object = [System.Windows.Forms.Label]
+
+$Date = Get-Date
+
+$Body = New-Object $Label_Object
+
+$Body.Text = "BrowsEnder `nstarted on `n`n$Date"
+
+$Body.AutoSize = $true
+
+$Body.Font = 'Verdana,10,style=Bold'
+
+$Body.Location = New-Object System.Drawing.Point(0, 0)
+
+$BrowsEnder_Window.FormBorderStyle = 'FixedDialog'
+
+$BrowsEnder_Window.AutoScale = $false
+
+$BrowsEnder_Window.MaximizeBox = $false
+
+$BrowsEnder_Window.Controls.Add($Body)
+
+$BrowsEnder_Window.ShowDialog()
+
 if ($null -eq $Is_Browser_Open) {
 
     $Okay_Button = [System.Windows.MessageBoxButton]::Ok
