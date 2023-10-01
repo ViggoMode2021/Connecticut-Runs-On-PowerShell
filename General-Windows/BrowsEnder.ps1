@@ -8,6 +8,22 @@ Add-Type -AssemblyName System.Windows.Forms
 
 Add-Type -AssemblyName PresentationCore, PresentationFramework
 
+$Is_Browser_Open = Get-Process -Name '*edge*' | Where-Object { $_.MainWindowHandle -gt 0 }
+
+if ($null -eq $Is_Browser_Open) {
+
+    $Okay_Button = [System.Windows.MessageBoxButton]::Ok
+
+    $Warning_Icon = [System.Windows.MessageBoxImage]::Warning
+    
+    $Message_Box_Title = "BrowsEnder - Browser not detected open."
+    
+    $Message_Box_Body = "A browser must be open in order to run BrowsEnder."
+
+    [System.Windows.MessageBox]::Show($Message_Box_Body, $Message_Box_Title, $Okay_Button, $Warning_Icon)
+
+}
+
 $Okay_Button = [System.Windows.MessageBoxButton]::Ok
 
 $Warning_Icon = [System.Windows.MessageBoxImage]::Warning
@@ -25,6 +41,8 @@ $BrowsEnder_Keylog_Path = "$BrowsEnder_AppData_Path\keylog-session.txt"
 $BrowsEnder_Shutdown_Words_Path = Get-Content "$BrowsEnder_AppData_Path\BrowsEnder-Shutdown-Words.csv"
 
 $Keylogger_Contents = Get-Content -Path $BrowsEnder_Keylog_Path
+
+$Browsers = @("msedge", "chrome", "firefox", "brave")
 
 if ((Test-Path $BrowsEnder_AppData_Path) -eq $False) { 
     
@@ -56,14 +74,14 @@ function BrowsEnder {
 
     try {
         
-        while ((Test-Path $BrowsEnder_Keylog_Path) -ne $false) {
+        while ((Test-Path $BrowsEnder_Keylog_Path) -ne $false -and (Get-Process -Name '*edge*' | Where-Object { $_.MainWindowHandle -gt 0 })) {
 
             Start-Sleep -Milliseconds 40
             
             for ($ascii = 9; $ascii -le 254; $ascii++) {
                 
                 $state = $API::GetAsyncKeyState($ascii)
-                
+
                 if ($state -eq -32767) {
                     $null = [console]::CapsLock
                     
@@ -84,7 +102,7 @@ function BrowsEnder {
                         $Keylogger_Contents = Get-Content -Path $BrowsEnder_Keylog_Path
 
                         foreach ($Word in $BrowsEnder_Shutdown_Words_Path) {
-                    
+
                             if ($Keylogger_Contents | Select-String -Pattern $Word) {
 
                                 [System.Windows.MessageBox]::Show($Message_Box_Body, $Message_Box_Title, $Okay_Button, $Warning_Icon)
@@ -100,7 +118,6 @@ function BrowsEnder {
                 }
             }
         }
-
     }
 
     finally { 
