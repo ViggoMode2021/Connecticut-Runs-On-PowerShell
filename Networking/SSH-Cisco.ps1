@@ -1,13 +1,15 @@
 # Install-Module -Name Posh-SSH -RequiredVersion 3.0.8
 
-$IP = "192.168.0.11"
+# Example - "192.168.0.11"
+
+$IP_Of_Device = Read-Host "What is the IP address of the device you want to SSH to?"
 
 Import-Module -Name Posh-SSH
 
-$SSHSession = New-SSHSession -ComputerName $IP -AcceptKey -Credential (Get-Credential admin)
+$SSH_Session = New-SSHSession -ComputerName $IP_Of_Device -AcceptKey -Credential (Get-Credential admin)
 
-$stream = $SSHSession.Session.CreateShellStream("dumb", 0, 0, 0, 0, 1000)
-$stream.Write("Terminal Length 0 `n")
-$stream.Write("Show Running-Config `n")
+$SSH_Stream = $SSH_Session.Session.CreateShellStream("dumb", 0, 0, 0, 0, 1000)
+$SSH_Stream.Write("Terminal Length 0 `n")
+$SSH_Stream.Write("Show Running-Config `n")
 Sleep 5
-$stream.read()
+$SSH_Stream.Read()
