@@ -2,10 +2,35 @@
 
 # Example - "192.168.0.11"
 
-$list = New-Object System.Collections.Generic.List[String] 
-$list.AddRange([String[]]("1.) Hostname", "`n2.) Show Running-Config", "`n3.) show running-config interface ___________", "`n4.) show ip interface _________________"))
-Write-Host $List 
-$list[1] 
+# https://www.netwrix.com/cisco_commands_cheat_sheet.html
+
+$Cisco_Commands = New-Object System.Collections.Generic.List[String] 
+$Cisco_Commands.AddRange([String[]]("1.) hostname", 
+        "`n2.) show running-config", 
+        "`n3.) show running-config interface ___________", 
+        "`n4.) show ip interface ___________",
+        "`n5.) show vtp status", 
+        "`n6.) show running-config", 
+        "`n7.) show running-config interface ___________", 
+        "`n8.) show ip interface ___________",
+        "`n9.) show mac address-table",
+        "`n10.) show cdp",
+        "`n11.) show cdp neighbors",
+        "`n12.) show interfaces",
+        "`n13.) show interface status",
+        "`n14.) show inmterfaces switchport",
+        "`n15.) show interfaces trunk",
+        "`n16.) show vlan",
+        "`n17.) show vlan brief"
+    ))
+
+$Selected_Command = Read-Host "Please type number of command that you would like to send the results of to a text file."
+
+Write-Host $Cisco_Commands
+
+$Selected_Command = [int]$Selected_Command
+$Selected_Command = $Selected_Command - 1
+$Cisco_Commands[$Selected_Command] 
 
 if (Get-Module -ListAvailable -Name Posh-SSH) {
     Write-Host "Posh-SSH is installed." -ForegroundColor Green
