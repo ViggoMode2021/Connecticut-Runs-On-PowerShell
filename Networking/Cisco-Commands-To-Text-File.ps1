@@ -4,6 +4,16 @@
 
 # https://www.netwrix.com/cisco_commands_cheat_sheet.html
 
+if (Get-Module -ListAvailable -Name Posh-SSH) {
+    Write-Host "Posh-SSH is installed." -ForegroundColor Green
+} 
+else {
+    Write-Host "Posh-SSH is not installed." -ForegroundColor Red
+    Install-Module -Name Posh-SSH -RequiredVersion 3.0.8
+}
+
+Import-Module -Name Posh-SSH
+
 $Cisco_Commands = New-Object System.Collections.Generic.List[String] 
 $Cisco_Commands.AddRange([String[]]("1.) hostname", 
         "`n2.) show running-config", 
@@ -36,16 +46,6 @@ $Selected_Command = $Cisco_Commands[$Selected_Command]
 $Remove_Closing_Parenthesis = $Selected_Command.IndexOf(") ")      
 $Selected_Command = $Selected_Command.Substring($Remove_Closing_Parenthesis + 1)
 
-if (Get-Module -ListAvailable -Name Posh-SSH) {
-    Write-Host "Posh-SSH is installed." -ForegroundColor Green
-} 
-else {
-    Write-Host "Posh-SSH is not installed." -ForegroundColor Red
-    Install-Module -Name Posh-SSH -RequiredVersion 3.0.8
-}
-
-Import-Module -Name Posh-SSH
-
 $IP_Of_Device = Read-Host "What is the IP address of the device you want to SSH to?"
 
 $SSH_Session = New-SSHSession -ComputerName $IP_Of_Device -AcceptKey -Credential (Get-Credential admin)
@@ -53,4 +53,13 @@ $SSH_Session = New-SSHSession -ComputerName $IP_Of_Device -AcceptKey -Credential
 $SSH_Stream = $SSH_Session.Session.CreateShellStream("", 0, 0, 0, 0, 1000)
 $SSH_Stream.Write("$Selected_Command `n")
 Start-Sleep 5
+
+$Get_Hostname = $SSH_Stream.Read()
+
+$Pound_Sign = "#"
+
+$Hostname = $Hostname.split($Pound)
+
+Write-Host $Hostname[0] -ForegroundColor Blue
+
 $SSH_Stream.Read() | Out-File .\$Selected_Command.txt
