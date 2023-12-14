@@ -14,6 +14,14 @@ else {
 
 Import-Module -Name Posh-SSH
 
+$IP_Of_Device = Read-Host "What is the IP address of the device you want to SSH to?"
+
+Write-Host "An SSH connection will be established for $IP_Of_Device." -ForegroundColor Green
+
+$SSH_User = Read-Host "Which user will be establishing the SSH connection?"
+
+$SSH_Session = New-SSHSession -ComputerName $IP_Of_Device -AcceptKey -Credential (Get-Credential $SSH_User)
+
 $Cisco_Commands = New-Object System.Collections.Generic.List[String] 
 $Cisco_Commands.AddRange([String[]]("1.) hostname", 
         "`n2.) show running-config", 
@@ -46,20 +54,22 @@ $Selected_Command = $Cisco_Commands[$Selected_Command]
 $Remove_Closing_Parenthesis = $Selected_Command.IndexOf(") ")      
 $Selected_Command = $Selected_Command.Substring($Remove_Closing_Parenthesis + 1)
 
-$IP_Of_Device = Read-Host "What is the IP address of the device you want to SSH to?"
+$Interface_Commands = "3", "4", "7", "8"
 
-$SSH_Session = New-SSHSession -ComputerName $IP_Of_Device -AcceptKey -Credential (Get-Credential admin)
+if ($Selected_Command -in $Interface_Commands) {
+
+    $Selected_Interface = Read-Host "Please type interface number."
+
+    $Selected_Command = $Selected_Command + $Selected_Interface 
+
+    Write-Host $Selected_Command -ForegroundColor Yellow
+
+}
+
+Write-Host "Please wait, executing $Selected_Command to $IP_Of_Device as $SSH_User...." -ForegroundColor Green
 
 $SSH_Stream = $SSH_Session.Session.CreateShellStream("", 0, 0, 0, 0, 1000)
 $SSH_Stream.Write("$Selected_Command `n")
 Start-Sleep 5
-
-$Get_Hostname = $SSH_Stream.Read()
-
-$Pound_Sign = "#"
-
-$Hostname = $Hostname.split($Pound)
-
-Write-Host $Hostname[0] -ForegroundColor Blue
 
 $SSH_Stream.Read() | Out-File .\$Selected_Command.txt
