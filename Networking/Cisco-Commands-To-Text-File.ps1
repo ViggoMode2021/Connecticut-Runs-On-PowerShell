@@ -5,16 +5,32 @@
 # https://www.netwrix.com/cisco_commands_cheat_sheet.html
 
 if (Get-Module -ListAvailable -Name Posh-SSH) {
+
     Write-Host "Posh-SSH is installed." -ForegroundColor Green
+
 } 
 else {
+
     Write-Host "Posh-SSH is not installed." -ForegroundColor Red
+
     Install-Module -Name Posh-SSH -RequiredVersion 3.0.8
 }
 
 Import-Module -Name Posh-SSH
 
-$IP_Of_Device = Read-Host "What is the IP address of the device you want to SSH to?"
+do {
+    
+    $IP_Of_Device = Read-Host "What is the IP address of the device you want to SSH to?"
+
+    if ($IP_Of_Device -notmatch "\b(([01]?\d?\d|2[0-4]\d|25[0-5])\.){3}([01]?\d?\d|2[0-4]\d|25[0-5])\b") {
+
+        Write-Host "$IP_Of_Device is not a valid IP address. Please try again." -ForegroundColor Red
+        
+    }
+
+}
+
+until($IP_Of_Device -match "\b(([01]?\d?\d|2[0-4]\d|25[0-5])\.){3}([01]?\d?\d|2[0-4]\d|25[0-5])\b")
 
 Write-Host "An SSH connection will be established for $IP_Of_Device." -ForegroundColor Green
 
@@ -49,9 +65,13 @@ Write-Host $Cisco_Commands -ForegroundColor Green
 $Selected_Command = Read-Host "### Please type number of command that you would like to send the results of to a text file. ###"
 
 $Selected_Command = [int]$Selected_Command
+
 $Selected_Command = $Selected_Command - 1
+
 $Selected_Command = $Cisco_Commands[$Selected_Command]
-$Remove_Closing_Parenthesis = $Selected_Command.IndexOf(") ")      
+
+$Remove_Closing_Parenthesis = $Selected_Command.IndexOf(") ")  
+
 $Selected_Command = $Selected_Command.Substring($Remove_Closing_Parenthesis + 1)
 
 $Interface_Commands = "3", "4", "7", "8"
@@ -69,7 +89,9 @@ if ($Selected_Command -in $Interface_Commands) {
 Write-Host "Please wait, executing $Selected_Command to $IP_Of_Device as $SSH_User...." -ForegroundColor Green
 
 $SSH_Stream = $SSH_Session.Session.CreateShellStream("", 0, 0, 0, 0, 1000)
+
 $SSH_Stream.Write("$Selected_Command `n")
+
 Start-Sleep 5
 
 $SSH_Stream.Read() | Out-File .\$Selected_Command.txt
