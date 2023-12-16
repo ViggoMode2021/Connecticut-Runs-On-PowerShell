@@ -6,7 +6,7 @@
 
 if (Get-Module -ListAvailable -Name Posh-SSH) {
 
-    Write-Host "Posh-SSH is installed." -ForegroundColor Green
+    Write-Host ".\Posh-SSH is installed." -ForegroundColor Green
 
 } 
 else {
@@ -38,21 +38,22 @@ $SSH_User = Read-Host "Which user will be establishing the SSH connection?"
 
 $SSH_Session = New-SSHSession -ComputerName $IP_Of_Device -AcceptKey -Credential (Get-Credential $SSH_User)
 
-$Cisco_Commands = New-Object System.Collections.Generic.List[String] 
+$Cisco_Commands = New-Object System.Collections.Generic.List[String]
+
 $Cisco_Commands.AddRange([String[]]("1.) hostname", 
         "`n2.) show running-config", 
-        "`n3.) show running-config interface ___________", 
-        "`n4.) show ip interface ___________",
+        "`n3.) show running-config interface", 
+        "`n4.) show interfaces",
         "`n5.) show vtp status", 
-        "`n6.) show running-config", 
-        "`n7.) show running-config interface ___________", 
-        "`n8.) show ip interface ___________",
+        "`n6.) show running-config",
+        "`n7.) show running-config interface", 
+        "`n8.) show ip interface",
         "`n9.) show mac address-table",
         "`n10.) show cdp",
         "`n11.) show cdp neighbors",
         "`n12.) show interfaces",
         "`n13.) show interface status",
-        "`n14.) show inmterfaces switchport",
+        "`n14.) show interfaces switchport",
         "`n15.) show interfaces trunk",
         "`n16.) show vlan",
         "`n17.) show vlan brief",
@@ -68,30 +69,56 @@ $Selected_Command = [int]$Selected_Command
 
 $Selected_Command = $Selected_Command - 1
 
-$Selected_Command = $Cisco_Commands[$Selected_Command]
-
-$Remove_Closing_Parenthesis = $Selected_Command.IndexOf(") ")  
-
-$Selected_Command = $Selected_Command.Substring($Remove_Closing_Parenthesis + 1)
+$Selected_Command_String = [string]$Selected_Command
 
 $Interface_Commands = "3", "4", "7", "8"
 
-if ($Selected_Command -in $Interface_Commands) {
+if ($Interface_Commands -contains $Selected_Command_String) {
 
     $Selected_Interface = Read-Host "Please type interface number."
 
-    $Selected_Command = $Selected_Command + $Selected_Interface 
+    $Selected_Command = $Cisco_Commands[$Selected_Command]
+
+    $Remove_Closing_Parenthesis = $Selected_Command.IndexOf(") ")
+
+    $Selected_Command = $Selected_Command + $Selected_Interface
 
     Write-Host $Selected_Command -ForegroundColor Yellow
 
+    $Selected_Command = $Cisco_Commands[$Selected_Command]
+
+    $Remove_Closing_Parenthesis = $Selected_Command.IndexOf(") ")  
+
+    $Selected_Command = $Selected_Command.Substring($Remove_Closing_Parenthesis + 1)
+
+    Write-Host "Please wait, executing '$Selected_Command' to $IP_Of_Device as $SSH_User...." -ForegroundColor Green
+
+    $SSH_Stream = $SSH_Session.Session.CreateShellStream("", 0, 0, 0, 0, 1000)
+
+    $SSH_Stream.Write("$Selected_Command `n")
+
+    Start-Sleep 5
+
+    $SSH_Stream.Read() | Out-File .\$Selected_Command.txt
+
 }
 
-Write-Host "Please wait, executing $Selected_Command to $IP_Of_Device as $SSH_User...." -ForegroundColor Green
+else {
 
-$SSH_Stream = $SSH_Session.Session.CreateShellStream("", 0, 0, 0, 0, 1000)
+    $Selected_Command = $Cisco_Commands[$Selected_Command]
 
-$SSH_Stream.Write("$Selected_Command `n")
+    $Remove_Closing_Parenthesis = $Selected_Command.IndexOf(") ")  
 
-Start-Sleep 5
+    $Selected_Command = $Selected_Command.Substring($Remove_Closing_Parenthesis + 1)
 
-$SSH_Stream.Read() | Out-File .\$Selected_Command.txt
+    Write-Host "Please wait, executing $Selected_Command to $IP_Of_Device as $SSH_User...." -ForegroundColor Green
+
+    $SSH_Stream = $SSH_Session.Session.CreateShellStream("", 0, 0, 0, 0, 1000)
+
+    $SSH_Stream.Write("$Selected_Command `n")
+
+    Start-Sleep 5
+
+    $SSH_Stream.Read() | Out-File .\$Selected_Command.txt
+
+}
